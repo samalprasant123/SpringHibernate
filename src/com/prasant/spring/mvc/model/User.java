@@ -1,16 +1,24 @@
 package com.prasant.spring.mvc.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.prasant.spring.mvc.validator.ValidEmail;
 
+@Entity
+@Table(name="users")
 public class User {
 
+	@Id
 	@NotBlank
 	@Size(min=5, max=15)
 	@Pattern(regexp="^\\w{5,}$")
+	@Column(name="username")
 	private String username;
 	
 	@NotBlank

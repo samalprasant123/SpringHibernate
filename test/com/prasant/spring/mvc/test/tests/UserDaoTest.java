@@ -33,18 +33,20 @@ public class UserDaoTest {
 	@Autowired
 	public UserDAO userDao;
 	
-	/*@Before
+	@Before
 	public void init() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-	}*/
+		jdbcTemplate.execute("DELETE FROM offer");
+		jdbcTemplate.execute("DELETE FROM users");
+	}
 	
 	@Test
 	public void testCreateUser() {
-		User user = new User("psamal", "psamal@spring.com", "password", true, "ROLE_ADMIN", "Prasant Samal");
+		User user = new User("grout", "grout@email.com", "password", true, "ROLE_USER", "Gayatree Rout");
 		assertTrue("User creation successfull", userDao.create(user));
-		assertTrue("User psamal exists", userDao.getUser("psamal"));
 		List<User> users = userDao.getUsers();
 		assertEquals("1 users currently", 1, users.size());
+		assertTrue("User grout exists", userDao.getUser("grout"));
 		assertEquals("Created user and 	retrieved User should be identical", user, users.get(0));
 	}
 

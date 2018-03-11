@@ -48,7 +48,7 @@ public class OfferDaoTest {
 	public void testOffer() {
 		User user = new User("grout", "grout@cat.com", true, "ROLE_USER", "Gayatree Rout");
 		//assertTrue("User creation successfull", userDao.create(user));
-		Offer offer = new Offer(user, "I can write awesome contents.");
+		Offer offer = new Offer(user, "I write awesome contents.");
 		//assertTrue("Ofer creation successful", offerDao.create(offer));
 		List<Offer> offers = offerDao.getOffersByUserName("grout");
 		assertEquals("Retrieved offer should match created offer", offer, offers.get(0));
