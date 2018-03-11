@@ -25,13 +25,17 @@ import com.prasant.spring.mvc.model.User;
 		"classpath:com/prasant/spring/mvc/test/config/dataSource.xml",
 		"classpath:com/prasant/spring/mvc/config/security-context.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class UserDaoTest {
+public class UserDAOTest {
 	
 	@Autowired
 	public DataSource dataSource;
 	
 	@Autowired
 	public UserDAO userDao;
+	
+	private User user1 = new User("grout", "grout@email.com", "password", true, "ROLE_USER", "Gayatree Rout");
+	
+	private User user2 = new User("psamal", "psamal@email.com", "password", true, "ROLE_ADMIN", "Prasant Samal");
 	
 	@Before
 	public void init() {
@@ -41,13 +45,24 @@ public class UserDaoTest {
 	}
 	
 	@Test
-	public void testCreateUser() {
-		User user = new User("grout", "grout@email.com", "password", true, "ROLE_USER", "Gayatree Rout");
-		assertTrue("User creation successfull", userDao.create(user));
+	public void create() {		
+		userDao.create(user1);
+	}
+	
+	@Test
+	public void getUsers() {
+		userDao.create(user1);
+		userDao.create(user2);
 		List<User> users = userDao.getUsers();
-		assertEquals("1 users currently", 1, users.size());
-		assertTrue("User grout exists", userDao.getUser("grout"));
-		assertEquals("Created user and 	retrieved User should be identical", user, users.get(0));
+		assertEquals("2 users currently", 2, users.size());
+	}
+	
+	@Test
+	public void getUser() {
+		userDao.create(user2);
+		assertTrue("User psamal exists", userDao.getUser("psamal"));
+		List<User> users = userDao.getUsers();
+		assertEquals("Created user and 	retrieved User should be identical", user2, users.get(0));
 	}
 
 }

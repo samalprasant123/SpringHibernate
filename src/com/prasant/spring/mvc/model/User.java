@@ -4,10 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.prasant.spring.mvc.validationgroup.FormValidationGroup;
+import com.prasant.spring.mvc.validationgroup.PersistenceValidationGroup;
 import com.prasant.spring.mvc.validator.ValidEmail;
 
 @Entity
@@ -15,27 +18,27 @@ import com.prasant.spring.mvc.validator.ValidEmail;
 public class User {
 
 	@Id
-	@NotBlank
-	@Size(min=5, max=15)
-	@Pattern(regexp="^\\w{5,}$")
+	@NotBlank(groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
+	@Size(min=5, max=15, groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
+	@Pattern(regexp="^\\w{5,}$", groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
 	@Column(name="username")
 	private String username;
 	
-	@NotBlank
-	@ValidEmail
+	@NotBlank(groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
+	@ValidEmail(groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
 	private String email;
 	
-	@NotBlank
-	@Pattern(regexp="^\\S+$")
-	@Size(min=5, max=20)
+	@NotBlank(groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
+	@Pattern(regexp="^\\S+$", groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
+	@Size(min=5, max=20, groups= {FormValidationGroup.class})
 	private String password;
 	
 	private boolean enabled = false;
 	
 	private String authority;
 	
-	@NotBlank
-	@Pattern(regexp="[a-zA-Z ]+")
+	@NotBlank(groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
+	@Pattern(regexp="[a-zA-Z ]+", groups= {PersistenceValidationGroup.class, FormValidationGroup.class})
 	private String name;
 	
 	public User() {

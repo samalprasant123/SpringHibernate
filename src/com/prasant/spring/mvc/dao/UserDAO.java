@@ -37,12 +37,9 @@ public class UserDAO {
 		return sessionFactory.getCurrentSession();
 	}
 	
-	@Transactional
-	public boolean create(User user) {
+	public void create(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		BeanPropertySqlParameterSource paramMap = new BeanPropertySqlParameterSource(user);
-		String sql1 = "INSERT INTO users VALUES (:username, :password, :email, :enabled, :name, :authority)";
-		return jdbcTemplate.update(sql1, paramMap) == 1;
+		session().save(user);
 	}
 
 	public boolean getUser(String username) {
@@ -54,13 +51,6 @@ public class UserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<User> getUsers() {
-
-		/*
-		String sql = "SELECT * FROM users";
-		return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(User.class));
-		 */
-		List<User> users = session().createQuery("from User").list();
-		users.forEach(user -> System.out.println(user));
-		return users;
+		return session().createQuery("from User").list();
 	}
 }

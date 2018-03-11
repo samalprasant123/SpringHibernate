@@ -9,11 +9,13 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.prasant.spring.mvc.model.User;
 import com.prasant.spring.mvc.service.UserService;
+import com.prasant.spring.mvc.validationgroup.PersistenceValidationGroup;
 
 @Controller
 public class LoginController {
@@ -33,7 +35,7 @@ public class LoginController {
 	}
 	
 	@RequestMapping(value="/createaccount", method=RequestMethod.POST)
-	public String createAccount(@Valid User user, BindingResult bindingResult) {
+	public String createAccount(@Validated(PersistenceValidationGroup.class) User user, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			return "newaccount";
 		}

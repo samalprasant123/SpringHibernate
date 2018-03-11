@@ -15,8 +15,8 @@ public class UserService {
 	@Autowired
 	private UserDAO userDao;
 	
-	public boolean createUser(User user) {
-		return userDao.create(user);
+	public void createUser(User user) {
+		userDao.create(user);
 	}
 
 	public boolean userExists(String username) {
