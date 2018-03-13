@@ -1,6 +1,7 @@
 package com.prasant.spring.mvc.test.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -61,6 +62,7 @@ public class UserDAOTest {
 	public void getUser() {
 		userDao.create(user2);
 		assertTrue("User psamal exists", userDao.getUser("psamal"));
+		assertFalse("User doenst psamal1 exists", userDao.getUser("psamal1"));
 		List<User> users = userDao.getUsers();
 		assertEquals("Created user and 	retrieved User should be identical", user2, users.get(0));
 	}

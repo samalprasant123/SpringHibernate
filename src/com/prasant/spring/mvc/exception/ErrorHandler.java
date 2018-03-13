@@ -16,6 +16,13 @@ public class ErrorHandler {
 		return "error";
 	}
 	
+	/*@ExceptionHandler(IllegalArgumentException.class)
+	public String handleHibernate5Exception(IllegalArgumentException e, Model model) {
+		model.addAttribute("errorMsg", "Error - " + e.getMessage());
+		e.printStackTrace();
+		return "error";
+	}*/
+	
 	@ExceptionHandler(AccessDeniedException.class)
 	public String handleAccessException(AccessDeniedException e) {
 		return "accessDenied";

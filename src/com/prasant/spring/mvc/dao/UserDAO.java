@@ -2,14 +2,14 @@ package com.prasant.spring.mvc.dao;
 
 import java.util.List;
 
-import javax.sql.DataSource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +20,8 @@ import com.prasant.spring.mvc.model.User;
 @Component("userDao")
 public class UserDAO {
 
-	private NamedParameterJdbcTemplate jdbcTemplate;
-	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
 	
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -43,10 +36,15 @@ public class UserDAO {
 	}
 
 	public boolean getUser(String username) {
-		String sql = "SELECT COUNT(*) FROM users where username = :username";
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("username", username);
-		return jdbcTemplate.queryForObject(sql, paramMap, Integer.class) == 1;
+		CriteriaBuilder criteriaBuilder = session().getCriteriaBuilder();
+		CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+		Root<User> userRoot = criteriaQuery.from(User.class);
+		criteriaQuery.select(userRoot).where(criteriaBuilder.equal(userRoot.get("username"), username));
+		
+		Query<User> query = session().createQuery(criteriaQuery);
+		User users = query.uniqueResult();
+		//User users = query.getSingleResult();
+		return users != null;
 	}
 
 	@SuppressWarnings("unchecked")
