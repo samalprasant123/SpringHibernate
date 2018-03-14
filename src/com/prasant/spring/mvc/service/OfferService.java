@@ -22,8 +22,8 @@ public class OfferService {
 	}
 	
 	@Secured({"ROLE_USER", "ROLE_ADMIN"})
-	public boolean createOffer(Offer offer) {
-		return offerDao.create(offer);
+	public void createOffer(Offer offer) {
+		offerDao.create(offer);
 	}
 
 	public void throwTestException() {

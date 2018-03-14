@@ -4,8 +4,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.sql.DataSource;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,12 +21,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.prasant.spring.mvc.model.Offer;
 import com.prasant.spring.mvc.model.User;
 
+@Transactional
 @Component("offerDao")
 public class OfferDAO {
 	
@@ -31,16 +37,24 @@ public class OfferDAO {
 		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
+	@Autowired
+	private SessionFactory sessionFactory;
+	
+	public Session session() {
+		return sessionFactory.getCurrentSession();
+	}
+	
 	public List<Offer> getOffers() {
 		List<Offer> offers = null;
-		try {			
-			String sql = "SELECT * FROM offer, users WHERE offer.username = users.username AND users.enabled = true";
-			offers = jdbcTemplate.query(sql, new OfferRowMapper());
-		} catch(CannotGetJdbcConnectionException e) {
-			System.out.println("Cannot connect to database " + e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
+		CriteriaBuilder criteriaBuilder = session().getCriteriaBuilder();
+		CriteriaQuery<Offer> criteriaQuery = criteriaBuilder.createQuery(Offer.class);
+		Root<Offer> offerRoot = criteriaQuery.from(Offer.class);
+		Root<User> userRoot = criteriaQuery.from(User.class);
+		criteriaQuery.select(offerRoot).where(
+				criteriaBuilder.equal(offerRoot.get("user"), userRoot.get("username")), 
+				criteriaBuilder.equal(userRoot.get("enabled"), true));
+		Query<Offer> query = session().createQuery(criteriaQuery);
+		offers = query.getResultList();
 		return offers;
 	}
 	
@@ -79,10 +93,8 @@ public class OfferDAO {
 		return jdbcTemplate.update(sql, paramMap) == 1;		
 	}
 	
-	public boolean create(Offer offer) {
-		BeanPropertySqlParameterSource paramMap = new BeanPropertySqlParameterSource(offer);
-		String sql = "INSERT INTO offer(username, text) VALUES(:username, :text)";
-		return jdbcTemplate.update(sql, paramMap) == 1;
+	public void create(Offer offer) {
+		session().save(offer);
 	}
 	
 	public boolean update(Offer offer) {

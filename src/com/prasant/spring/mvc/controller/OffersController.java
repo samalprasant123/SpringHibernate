@@ -9,12 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.prasant.spring.mvc.model.Offer;
 import com.prasant.spring.mvc.service.OfferService;
+import com.prasant.spring.mvc.validationgroup.FormValidationGroup;
+import com.prasant.spring.mvc.validationgroup.PersistenceValidationGroup;
 
 @Controller
 public class OffersController {
@@ -45,7 +48,7 @@ public class OffersController {
 	}
 	
 	@RequestMapping(value="/docreate", method=RequestMethod.POST)
-	public String offerCreated(Model model, @Valid Offer offer, BindingResult bindingResult, Principal principal,
+	public String offerCreated(Model model, @Validated(FormValidationGroup.class) Offer offer, BindingResult bindingResult, Principal principal,
 			@RequestParam(value="save", required = false) String actionSave,
 			@RequestParam(value="delete", required = false) String actionDelete) {
 		if (bindingResult.hasErrors()) {
