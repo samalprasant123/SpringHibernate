@@ -35,6 +35,7 @@
 			<property name="hibernateProperties">
 				<props>
 					<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+					<prop key="hibernate.id.new_generator_mappings">false</prop>
 					<prop key="javax.persistence.validation.group.pre-persist">com.prasant.spring.mvc.validationgroup.PersistenceValidationGroup</prop>
 					<prop key="javax.persistence.validation.group.pre-update">com.prasant.spring.mvc.validationgroup.PersistenceValidationGroup</prop>
 					<prop key="javax.persistence.validation.group.pre-remove">com.prasant.spring.mvc.validationgroup.PersistenceValidationGroup</prop>

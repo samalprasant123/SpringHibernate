@@ -1,6 +1,7 @@
 package com.prasant.spring.mvc.test.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class OfferDAOTest {
 	@Autowired
 	public UserDAO userDao;
 	
-	private User user1 = new User("grout", "grout@email.com", true, "ROLE_USER", "Gayatree Rout");
+	private User user1 = new User("grout", "grout@email.com", "password", true, "ROLE_USER", "Gayatree Rout");
 	
 	private Offer offer1 = new Offer(user1, "I write awesome contents.");
 	
@@ -49,24 +50,38 @@ public class OfferDAOTest {
 	public void init() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		jdbcTemplate.execute("DELETE FROM offer");
+		jdbcTemplate.execute("DELETE FROM users");
 	}
-	
-	/*@Test
-	public void testOffer() {
-		
-		Offer offer = new Offer(user1, "I write awesome contents.");
-		//assertTrue("Ofer creation successful", offerDao.create(offer));
-		List<Offer> offers = offerDao.getOffersByUserName("grout");
-		assertEquals("Retrieved offer should match created offer", offer, offers.get(0));
-	}*/
 	
 	@Test
 	public void create() {
+		userDao.create(user1);
 		offerDao.create(offer1);
+	}
+
+	@Test
+	public void update() {
+		userDao.create(user1);
+		offerDao.create(offer1);
+		offer1.setText("Updated text");
+		offerDao.update(offer1);
+		List<Offer> offers1 = offerDao.getOffersByUserName("grout");
+		assertEquals("Offer retrieved should match offer created", offer1, offers1.get(0));
+	}
+
+	@Test
+	public void saveOrUpdate() {
+		userDao.create(user1);
+		offerDao.saveOrUpdate(offer1);
+		offer1.setText("Updated text");
+		offerDao.saveOrUpdate(offer1);
+		List<Offer> offers1 = offerDao.getOffersByUserName("grout");
+		assertEquals("Offer retrieved should match offer created", offer1, offers1.get(0));
 	}
 	
 	@Test
 	public void getOffers() {
+		userDao.create(user1);
 		offerDao.create(offer1);
 		List<Offer> offers1 = offerDao.getOffers();
 		assertEquals("There should be one offer", 1, offers1.size());
@@ -74,6 +89,39 @@ public class OfferDAOTest {
 		userDao.create(user2);
 		offerDao.create(offer2);
 		List<Offer> offers2 = offerDao.getOffers();
-		assertEquals("There should be one offer", 2, offers2.size());
+		assertEquals("There should be two offers", 2, offers2.size());
 	}
+	
+	@Test
+	public void getOffersByUserName() {
+		userDao.create(user1);
+		offerDao.create(offer1);
+		List<Offer> offers1 = offerDao.getOffersByUserName("grout");
+		assertEquals("There should be one offer", 1, offers1.size());
+		assertEquals("Offer retrieved should match offer created", offer1, offers1.get(0));
+	}
+	
+	@Test
+	public void getOfferById() {
+		userDao.create(user1);
+		offerDao.create(offer1);
+		List<Offer> offers1 = offerDao.getOffersByUserName("grout");
+		int id = offers1.get(0).getId();
+		Offer offer = offerDao.getOfferById(id);
+		assertEquals("Offer retrieved should match offer created", offer1, offer);
+	}
+	
+	@Test
+	public void delete() {
+		userDao.create(user1);
+		offerDao.create(offer1);
+		List<Offer> offers1 = offerDao.getOffersByUserName("grout");
+		assertEquals("There should be one offer", 1, offers1.size());
+		assertEquals("Offer retrieved should match offer created", offer1, offers1.get(0));
+		int id = offers1.get(0).getId();
+		offerDao.delete(id);
+		Offer offer2 = offerDao.getOfferById(id);
+		assertNull(offer2);
+	}
+	
 }
